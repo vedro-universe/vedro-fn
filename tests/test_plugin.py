@@ -8,7 +8,7 @@ from vedro.events import ConfigLoadedEvent
 
 from ._utils import dispatcher, vedro_fn
 
-__all__ = ("dispatcher",)
+__all__ = ("dispatcher",)  # fixtures
 
 
 @pytest.mark.usefixtures(vedro_fn.__name__)
