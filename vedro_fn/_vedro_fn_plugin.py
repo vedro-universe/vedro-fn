@@ -39,7 +39,7 @@ class VedroFnPlugin(Plugin):
 
 class VedroFn(PluginConfig):
     plugin = VedroFnPlugin
-    description = "<description>"
+    description = "Enables a functional-style syntax for defining Vedro scenarios"
 
     # Show internal calls (vedro_fn) in the traceback output
     show_internal_calls = False
