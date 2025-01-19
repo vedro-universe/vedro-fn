@@ -41,8 +41,8 @@ class ScenarioLoader(BaseScenarioLoader):
         for idx, _ in enumerate(descriptor.params, start=1):
             scn_name = f"Scenario_{descriptor.name}_{idx}_VedroScenario"
             scenarios.append(
-                # very dirty hack, change this after v2 release
-                # this logic from `_Meta` class in vedro/_scenario.py
+                # This is a temporary and dirty workaround; to be revisited after the v2 release
+                # Logic adapted from the `_Meta` class in vedro/_scenario.py
                 cast(Type[Scenario], scenario_cls.__init__.__globals__[scn_name])
             )
         return scenarios

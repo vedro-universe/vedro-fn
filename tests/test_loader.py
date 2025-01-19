@@ -13,12 +13,13 @@ from ._utils import dispatcher, loader, run_scenarios, tmp_scn_dir
 __all__ = ("loader", "tmp_scn_dir", "dispatcher",)  # fixtures
 
 
-async def test_load_scenario(*, loader: Loader, tmp_scn_dir: Path):
+@pytest.mark.parametrize("decorator", ["@scenario", "@scenario()"])
+async def test_load_scenario(decorator: str, *, loader: Loader, tmp_scn_dir: Path):
     with given:
         path = tmp_scn_dir / "scenario.py"
-        path.write_text(dedent('''
+        path.write_text(dedent(f'''
             from vedro_fn import scenario
-            @scenario()
+            {decorator}
             def create_user():
                 pass
         '''))
@@ -61,14 +62,15 @@ async def test_load_scenarios(*, loader: Loader, tmp_scn_dir: Path):
         assert scenarios[1].__name__ == "Scenario_update_user"
 
 
+@pytest.mark.parametrize("decorator", ["@scenario", "@scenario()"])
 @pytest.mark.parametrize("fn_def", ["def", "async def"])
-async def test_run_passed_scenario(fn_def: str, *, loader: Loader, tmp_scn_dir: Path,
-                                   dispatcher: Dispatcher):
+async def test_run_passed_scenario(decorator: str, fn_def: str, *,
+                                   loader: Loader, tmp_scn_dir: Path, dispatcher: Dispatcher):
     with given:
         path = tmp_scn_dir / "scenario.py"
         path.write_text(dedent(f'''
             from vedro_fn import scenario
-            @scenario()
+            {decorator}
             {fn_def} create_user():
                 assert True
         '''))
@@ -82,14 +84,15 @@ async def test_run_passed_scenario(fn_def: str, *, loader: Loader, tmp_scn_dir: 
         assert report.total == report.passed == 1
 
 
+@pytest.mark.parametrize("decorator", ["@scenario", "@scenario()"])
 @pytest.mark.parametrize("fn_def", ["def", "async def"])
-async def test_run_failed_scenario(fn_def: str, *, loader: Loader, tmp_scn_dir: Path,
-                                   dispatcher: Dispatcher):
+async def test_run_failed_scenario(decorator: str, fn_def: str, *,
+                                   loader: Loader, tmp_scn_dir: Path, dispatcher: Dispatcher):
     with given:
         path = tmp_scn_dir / "scenario.py"
         path.write_text(dedent(f'''
             from vedro_fn import scenario
-            @scenario()
+            {decorator}
             {fn_def} create_user():
                 assert False
         '''))
@@ -103,15 +106,16 @@ async def test_run_failed_scenario(fn_def: str, *, loader: Loader, tmp_scn_dir: 
         assert report.total == report.failed == 1
 
 
+@pytest.mark.parametrize("decorator", ["@scenario[skip]", "@scenario[skip]()"])
 @pytest.mark.parametrize("fn_def", ["def", "async def"])
-async def test_run_skipped_scenario(fn_def: str, *, loader: Loader, tmp_scn_dir: Path,
-                                    dispatcher: Dispatcher):
+async def test_run_skipped_scenario(decorator: str, fn_def: str, *,
+                                    loader: Loader, tmp_scn_dir: Path, dispatcher: Dispatcher):
     with given:
         path = tmp_scn_dir / "scenario.py"
         path.write_text(dedent(f'''
             from vedro import skip
             from vedro_fn import scenario
-            @scenario[skip]()
+            {decorator}
             {fn_def} create_user():
                 assert False
         '''))

@@ -1,25 +1,29 @@
-from functools import wraps
-from typing import Any, Callable, Optional, Sequence, Tuple
+from typing import Any, Callable, Tuple, Union
 
 from ._scenario_descriptor import ScenarioDescriptor
 
 __all__ = ("scenario",)
 
 
-class scenario:
-    def __init__(self, params: Optional[Sequence[Any]] = None, /) -> None:
-        self._params: Tuple[Any, ...] = tuple(params) if params else ()
-        self._decorators: Tuple[Callable[..., Any], ...] = ()
+class _ScenarioDecorator:
+    def __init__(self, decorators: Tuple[Callable[..., Any], ...] = (),
+                 params: Tuple[Any, ...] = ()) -> None:
+        self._decorators = decorators
+        self._params = params
 
-    def __call__(self, fn: Callable[..., Any]) -> ScenarioDescriptor:
-        return ScenarioDescriptor(fn, self._decorators, self._params)
+    def __call__(self, /,
+                 fn_or_params: Any = None) -> Union[ScenarioDescriptor, "_ScenarioDecorator"]:
+        if fn_or_params is None:
+            return self
 
-    def __class_getitem__(cls, item: Any) -> Callable[..., "scenario"]:
+        if callable(fn_or_params):
+            return ScenarioDescriptor(fn_or_params, self._decorators, self._params)
+
+        return _ScenarioDecorator(self._decorators, fn_or_params)
+
+    def __getitem__(self, item: Any) -> "_ScenarioDecorator":
         decorators = item if isinstance(item, tuple) else (item,)
+        return _ScenarioDecorator(decorators, self._params)
 
-        @wraps(scenario)
-        def wrapped(params: Optional[Sequence[Any]] = None, /) -> "scenario":
-            scn = scenario(params)
-            scn._decorators = decorators
-            return scn
-        return wrapped
+
+scenario = _ScenarioDecorator()

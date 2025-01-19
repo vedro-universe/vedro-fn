@@ -145,7 +145,7 @@ async def test_run_partially_skipped_parameterized_scenario(*, loader: Loader, t
                                                             dispatcher: Dispatcher):
     with given:
         path = tmp_scn_dir / "scenario.py"
-        path.write_text(dedent(f'''
+        path.write_text(dedent('''
             from vedro import params, skip
             from vedro_fn import scenario
             @scenario([
