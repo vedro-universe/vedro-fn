@@ -1,4 +1,4 @@
-from typing import Any, Callable, Tuple, Union
+from typing import Any, Callable, Sequence, Tuple, Union, overload
 
 from ._scenario_descriptor import ScenarioDescriptor
 
@@ -11,19 +11,32 @@ class _ScenarioDecorator:
         self._decorators = decorators
         self._params = params
 
+    @overload
+    def __call__(self, /) -> "_ScenarioDecorator":
+        ...
+
+    @overload
+    def __call__(self, /, fn_or_params: Callable[..., Any]) -> ScenarioDescriptor:
+        ...
+
+    @overload
+    def __call__(self, /, fn_or_params: Sequence[Any]) -> "_ScenarioDecorator":
+        ...
+
     def __call__(self, /,
-                 fn_or_params: Any = None) -> Union[ScenarioDescriptor, "_ScenarioDecorator"]:
+                 fn_or_params: Union[Sequence[Any], Callable[..., Any], None] = None
+                 ) -> Union[ScenarioDescriptor, "_ScenarioDecorator"]:
         if fn_or_params is None:
             return self
 
         if callable(fn_or_params):
             return ScenarioDescriptor(fn_or_params, self._decorators, self._params)
 
-        return _ScenarioDecorator(self._decorators, fn_or_params)
+        return _ScenarioDecorator(self._decorators, tuple(fn_or_params))
 
     def __getitem__(self, item: Any) -> "_ScenarioDecorator":
         decorators = item if isinstance(item, tuple) else (item,)
-        return _ScenarioDecorator(decorators, self._params)
+        return _ScenarioDecorator(decorators)
 
 
 scenario = _ScenarioDecorator()
