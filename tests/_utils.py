@@ -57,6 +57,11 @@ async def run_scenarios(scenarios: List[Type[Scenario]], dispatcher: Dispatcher,
 
 def _create_vscenario(scenario: Type[Scenario], *, project_dir: Path) -> VirtualScenario:
     vscenario = create_vscenario(scenario, project_dir=project_dir)
-    if getattr(scenario, "__vedro__skipped__", False):
+
+    template = getattr(scenario, "__vedro__template__", None)
+    is_skipped = getattr(template, "__vedro__skipped__",
+                         getattr(scenario, "__vedro__skipped__", False))
+    if is_skipped:
         vscenario.skip()
+
     return vscenario
