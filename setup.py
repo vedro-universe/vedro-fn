@@ -13,7 +13,7 @@ def find_dev_required():
 
 setup(
     name="vedro-fn",
-    version="0.0.1",
+    version="0.1.0",
     description="Enables a functional-style syntax for defining Vedro scenarios",
     long_description=open("README.md").read(),
     long_description_content_type="text/markdown",
