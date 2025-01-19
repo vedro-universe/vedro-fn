@@ -12,15 +12,17 @@ class _ScenarioDecorator:
         self._params = params
 
     @overload
-    def __call__(self, /) -> "_ScenarioDecorator":
+    def __call__(self, /) -> "_ScenarioDecorator":  # pragma: no cover
         ...
 
     @overload
-    def __call__(self, /, fn_or_params: Callable[..., Any]) -> ScenarioDescriptor:
+    def __call__(self, /,
+                 fn_or_params: Callable[..., Any]) -> ScenarioDescriptor:  # pragma: no cover
         ...
 
     @overload
-    def __call__(self, /, fn_or_params: Sequence[Any]) -> "_ScenarioDecorator":
+    def __call__(self, /,
+                 fn_or_params: Sequence[Any]) -> "_ScenarioDecorator":  # pragma: no cover
         ...
 
     def __call__(self, /,
