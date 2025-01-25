@@ -118,3 +118,23 @@ def decode_base64_encoded_str(encoded, expected):
     with then:
         assert decoded == expected
 ```
+
+# Async Example
+
+Here’s an example of an asynchronous scenario:
+
+```python
+from vedro_fn import scenario, when, then
+from interfaces.api import fetch_users
+
+@scenario()
+async def fetch_users_from_api():
+    with when:
+        users = await fetch_users()
+
+    with then:
+        assert users == [
+            {"id": 1, "name": "Bob"},
+            {"id": 2, "name": "Alice"},
+        ]
+```
